@@ -1,5 +1,6 @@
 .builder/
 dist/
+recipe/build/
 *.log
 .DS_Store
 __pycache__/

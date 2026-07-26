@@ -25,13 +25,17 @@ if [[ ! -d "$TARGET" ]]; then
   "$BUILDER/target/download-target.sh" "$TARGET"
 fi
 
+RECIPE="$BUILDER/server/pypi/packages/talis-unicorn"
+mkdir -p "$RECIPE"
+cp -R "$ROOT/recipe/." "$RECIPE/"
+
 cd "$BUILDER/server/pypi"
-SOURCE_CACHE="$ROOT/recipe/build/2.1.4/unicorn-2.1.4.tar.gz"
+SOURCE_CACHE="$RECIPE/build/2.1.4/unicorn-2.1.4.tar.gz"
 mkdir -p "$(dirname "$SOURCE_CACHE")"
 curl --fail --location --output "$SOURCE_CACHE" "$UNICORN_URL"
 echo "$UNICORN_SHA256  $SOURCE_CACHE" | sha256sum --check --strict
 "$BUILDER/server/pypi/env/bin/python" ./build-wheel.py \
-  --python 3.11 --abi arm64-v8a "$ROOT/recipe"
+  --python 3.11 --abi arm64-v8a "$RECIPE"
 
 mkdir -p "$ROOT/dist"
 cp dist/unicorn/*.whl "$ROOT/dist/"
