@@ -1,0 +1,21 @@
+--- a/setup.py
++++ b/setup.py
+@@ -105,5 +105,17 @@ def build_libraries():
+     conf = 'Debug' if int(os.getenv('DEBUG', 0)) else 'Release'
+     cmake_args = ['cmake', '-B', BUILD_DIR, "-DCMAKE_BUILD_TYPE=" + conf, "-DUNICORN_BUILD_TESTS=off"]
++    # Chaquopy generates a CMake toolchain whose compilers, sysroot and linker
++    # flags target Android. Upstream's Python build doesn't forward it because
++    # ordinary desktop wheels don't need cross compilation.
++    toolchain = os.getenv("CMAKE_TOOLCHAIN_FILE")
++    if toolchain:
++        cmake_args += [
++            "-DCMAKE_TOOLCHAIN_FILE=" + toolchain,
++            "-DANDROID_ABI=" + os.environ["CHAQUOPY_ABI"],
++            # Anisette's arm64-v8a library bundle only executes AArch64 code.
++            # Removing unrelated backends materially reduces APK size.
++            "-DUNICORN_ARCH=aarch64",
++        ]
+     if os.getenv("UNICORN_TRACER"):
+         cmake_args += ["-DUNICORN_TRACER=on"]
+     if conf == 'Debug':
+         cmake_args += ["-DUNICORN_LOGGING=on"]

@@ -1,0 +1,15 @@
+package:
+  name: unicorn
+  version: "2.1.4"
+
+build:
+  number: 1
+
+source:
+  url: https://files.pythonhosted.org/packages/source/u/unicorn/unicorn-2.1.4.tar.gz
+
+requirements:
+  build:
+    - cmake 3.28.1
+  host:
+    - python
