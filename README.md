@@ -30,9 +30,10 @@ host with an Android SDK:
 ```
 
 The wheel is written to `dist/`. GitHub Actions builds the same artifact on a
-clean runner and publishes it as a workflow artifact. A release should attach
-the wheel plus `SHA256SUMS`; applications should consume an immutable release,
-never the latest workflow output.
+clean runner and publishes it as a workflow artifact. A release attaches the
+wheel, `SHA256SUMS`, the pinned upstream source archive and the exact Android
+patch; applications should consume a versioned release, never the latest
+workflow output.
 
 ## Supply-chain boundary
 
@@ -44,5 +45,5 @@ never the latest workflow output.
 - This project does not contain Apple credentials, Find My tokens, private
   OpenHaystack keys or location reports.
 
-Unicorn is distributed under the BSD 3-Clause license. Chaquopy's build tooling
-is MIT-licensed. See `THIRD_PARTY_NOTICES.md`.
+The engine code included in this build is distributed under GNU GPL version 2.
+Chaquopy's build tooling is MIT-licensed. See `THIRD_PARTY_NOTICES.md`.
