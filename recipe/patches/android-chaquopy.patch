@@ -27,3 +27,19 @@
          cmake_args += ["-DUNICORN_TRACER=on"]
      if conf == 'Debug':
          cmake_args += ["-DUNICORN_LOGGING=on"]
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -318,8 +318,12 @@ else()
+     set(EXTRA_CFLAGS "${EXTRA_CFLAGS}-fPIC")
+     if(ANDROID_ABI)
+-        set(EXTRA_CFLAGS "${EXTRA_CFLAGS} --target=${CMAKE_C_COMPILER_TARGET}")
+-        set(EXTRA_CFLAGS "${EXTRA_CFLAGS} --sysroot=${CMAKE_SYSROOT}")
++        if(CMAKE_C_COMPILER_TARGET)
++            set(EXTRA_CFLAGS "${EXTRA_CFLAGS} --target=${CMAKE_C_COMPILER_TARGET}")
++        endif()
++        if(CMAKE_SYSROOT)
++            set(EXTRA_CFLAGS "${EXTRA_CFLAGS} --sysroot=${CMAKE_SYSROOT}")
++        endif()
+     endif()
+     if(UNICORN_FUZZ)
+         set(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${CMAKE_C_FLAGS}")
