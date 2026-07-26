@@ -1,6 +1,6 @@
 --- a/setup.py
 +++ b/setup.py
-@@ -105,5 +105,25 @@ def build_libraries():
+@@ -104,6 +104,32 @@ def build_libraries():
      conf = 'Debug' if int(os.getenv('DEBUG', 0)) else 'Release'
      cmake_args = ['cmake', '-B', BUILD_DIR, "-DCMAKE_BUILD_TYPE=" + conf, "-DUNICORN_BUILD_TESTS=off"]
 +    # Chaquopy generates a CMake toolchain whose compilers, sysroot and linker
@@ -23,10 +23,26 @@
 +            # Removing unrelated backends materially reduces APK size.
 +            "-DUNICORN_ARCH=aarch64",
 +        ]
++        # Android's CMake generator intentionally omits versioned .so names,
++        # while Unicorn's ctypes loader expects libunicorn.so.2. Normalize the
++        # built artifact and its SONAME before setuptools packages it.
++        android_library = os.path.join(BUILD_DIR, "libunicorn.so")
++    else:
++        android_library = None
      if os.getenv("UNICORN_TRACER"):
          cmake_args += ["-DUNICORN_TRACER=on"]
      if conf == 'Debug':
          cmake_args += ["-DUNICORN_LOGGING=on"]
+@@ -128,2 +154,8 @@ def build_libraries():
+-        shutil.copy(os.path.join(BUILD_DIR, LIBRARY_FILE), LIBS_DIR)
++        built_library = os.path.join(BUILD_DIR, LIBRARY_FILE)
++        if toolchain and not os.path.exists(built_library):
++            subprocess.check_call(
++                ["patchelf", "--set-soname", LIBRARY_FILE, android_library]
++            )
++            built_library = android_library
++        shutil.copy(built_library, os.path.join(LIBS_DIR, LIBRARY_FILE))
+         shutil.copy(os.path.join(BUILD_DIR, STATIC_LIBRARY_FILE), LIBS_DIR)
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -318,8 +318,12 @@ else()
