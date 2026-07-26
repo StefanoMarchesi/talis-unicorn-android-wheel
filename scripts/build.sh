@@ -30,7 +30,8 @@ SOURCE_CACHE="$ROOT/recipe/build/2.1.4/unicorn-2.1.4.tar.gz"
 mkdir -p "$(dirname "$SOURCE_CACHE")"
 curl --fail --location --output "$SOURCE_CACHE" "$UNICORN_URL"
 echo "$UNICORN_SHA256  $SOURCE_CACHE" | sha256sum --check --strict
-./build-wheel.py --python 3.11 --abi arm64-v8a "$ROOT/recipe"
+"$BUILDER/server/pypi/env/bin/python" ./build-wheel.py \
+  --python 3.11 --abi arm64-v8a "$ROOT/recipe"
 
 mkdir -p "$ROOT/dist"
 cp dist/unicorn/*.whl "$ROOT/dist/"
