@@ -19,6 +19,9 @@ git -C "$BUILDER" checkout --detach "$CHAQUOPY_COMMIT"
 python3.11 -m venv "$BUILDER/server/pypi/env"
 "$BUILDER/server/pypi/env/bin/pip" install \
   --requirement "$BUILDER/server/pypi/requirements.txt"
+# build-wheel.py invokes the `wheel` console script while repacking the
+# Android-tagged artifact, so its own pinned virtualenv must also lead PATH.
+export PATH="$BUILDER/server/pypi/env/bin:$PATH"
 
 TARGET="$BUILDER/maven/com/chaquo/python/target/$TARGET_VERSION"
 if [[ ! -d "$TARGET" ]]; then
