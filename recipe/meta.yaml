@@ -13,3 +13,8 @@ requirements:
     - cmake 3.28.1
   host:
     - python
+
+about:
+  # The PyPI sdist doesn't carry a top-level license file, but the Unicorn
+  # engine sources include the upstream GPLv2 text here.
+  license_file: src/qemu/COPYING
